@@ -1,0 +1,10 @@
+{
+   serialNumber:String,
+   eventDesc:String,
+   customer:{type:Schema.Type.ObjectId,ref:'Customer'},
+   vendor:{type:Schema.Type.ObjectId,ref:'Vendor'},
+   product:Number,
+   quantity:Number,
+   status:Boolean,
+   purchaseDate:Date,
+}

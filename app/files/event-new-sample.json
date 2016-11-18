@@ -1,0 +1,6 @@
+{
+   "serialNumber":String,
+   "battery":Number,
+   "eventDesc":String,
+   "eventDate":Date
+}

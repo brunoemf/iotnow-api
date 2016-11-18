@@ -1,0 +1,6 @@
+{
+  "serialNumber":"abcde12345",
+  "battery":10.20,
+  "eventDate": new Date,
+  "eventDesc":"SINGLE",
+}

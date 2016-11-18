@@ -1,0 +1,15 @@
+{
+   "serialNumber":{type:String,unique:true},
+   "battery":Number,
+   "eventType":[
+     {
+        "eType":{type:String,unique:true},
+        "mapTo":Number,
+        "quantity":Number
+     }
+   ],
+   "vendor":{type: Schema.ObjectId,ref: 'Vendor'},
+   "customer":{type: Schema.ObjectId,ref: 'Customer'},
+   "createdOn":Date,
+   "lastUpdate":Date
+}
