@@ -115,16 +115,21 @@ api.insere = function(req,res) {
                         Message:'Clique no link para confirmar sua compra: http://localhost/purchase/'+result._id,
                         PhoneNumber:customer.contact
                      };
-                     sns.publish(params,function(err,data) {
-                        if (err) {
-                           console.log("erro: "+err);
-                           res.status(500).json(err);
-                           return;
-                        }
-                        console.log("Mensagem enviada com sucesso. MessageID: "+data.MessageId);
-                        res.location('/purchase/'+result._id)
-                        res.status(201).json(result)
-                     });
+
+                     // Utilizar essa linha quando a função de envio de SMS estiver comentada.
+                     // A linha abaixo deve ficar comentada quando a função de SMS estiver descomentada.
+                     res.status(201);
+
+                     // sns.publish(params,function(err,data) {
+                     //    if (err) {
+                     //       console.log("erro: "+err);
+                     //       res.status(500).json(err);
+                     //       return;
+                     //    }
+                     //    console.log("Mensagem enviada com sucesso. MessageID: "+data.MessageId);
+                     //    res.location('/purchase/'+result._id)
+                     //    res.status(201).json(result)
+                     // });
 
                   });
 
