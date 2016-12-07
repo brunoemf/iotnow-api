@@ -12,9 +12,7 @@ module.exports = function(app) {
 
     app.put("/purchase/:id",api.confirma);
 
+    app.get("/purchases",api.lista);
 
 
-
-
-
-      };
+};

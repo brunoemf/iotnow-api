@@ -82,10 +82,10 @@ api.insere = function(req,res) {
          .then(function(result) {
             if(result===null || result == ""){
                console.log("Nenhum device encontrado.");
-               res.status(403);
+               res.status(404).end();
                return;
             };
-
+            console.log("BreakPoint 1");
             purchase.customer = result.customer;
             purchase.vendor = result.vendor;
 
@@ -94,6 +94,7 @@ api.insere = function(req,res) {
                if(result.eventType[i].eType == evento.eventDesc){
                   purchase.product = result.eventType[i].mapTo
                   purchase.quantity = result.eventType[i].quantity
+
                }
             }
 
@@ -103,35 +104,69 @@ api.insere = function(req,res) {
             // Registra Purchase
             modelPurchase.create(purchase)
                .then(function resultPurchase(result) {
+                  console.log("BreakPoint 2");
+                  //let customer = purchase.customer;
+                  modelCustomer.findOne({_id:purchase.customer})
+                     .then(function resultBuscaCustomer(customer) {
 
-                  // Recupera contato do customer e envia SMS
-                  modelCustomer.buscaPorId(purchase.customer,function (erro,customer) {
-                     if (erro) {
+                           var params = {
+                              Message:'Clique no link para confirmar sua compra: http://iotnow.ddns.net/purchase/'+result._id,
+                              PhoneNumber:customer.contact
+                           };
+
+                           // Utilizar essa linha quando a função de envio de SMS estiver comentada.
+                           // A linha abaixo deve ficar comentada quando a função de SMS estiver descomentada.
+
+                           //res.status(201);
+                           console.log("BreakPoint 3");
+                           sns.publish(params,function(err,data) {
+                              console.log("BreakPoint 4");
+                              if (err) {
+                                 console.log("erro: "+err);
+                                 res.status(500).json(err);
+                                 return;
+                              }
+                              console.log("Mensagem enviada com sucesso. MessageID: "+data.MessageId);
+                              res.location('/purchase/'+result._id)
+                              res.status(201).json(result)
+                           });
+                     }),function erroBubscaPorId(erro) {
                         console.log("erro: "+err);
                         res.status(500).json(err);
                         return;
-                     }
-                     var params = {
-                        Message:'Clique no link para confirmar sua compra: http://localhost/purchase/'+result._id,
-                        PhoneNumber:customer.contact
                      };
 
-                     // Utilizar essa linha quando a função de envio de SMS estiver comentada.
-                     // A linha abaixo deve ficar comentada quando a função de SMS estiver descomentada.
-                     res.status(201);
 
-                     // sns.publish(params,function(err,data) {
-                     //    if (err) {
-                     //       console.log("erro: "+err);
-                     //       res.status(500).json(err);
-                     //       return;
-                     //    }
-                     //    console.log("Mensagem enviada com sucesso. MessageID: "+data.MessageId);
-                     //    res.location('/purchase/'+result._id)
-                     //    res.status(201).json(result)
-                     // });
 
-                  });
+                  // Recupera contato do customer e envia SMS
+                  // modelCustomer.buscaPorId(purchase.customer,function (erro,customer) {
+                  //    if (erro) {
+                  //       console.log("erro: "+err);
+                  //       res.status(500).json(err);
+                  //       return;
+                  //    }
+                  //    var params = {
+                  //       Message:'Clique no link para confirmar sua compra: http://localhost/purchase/'+result._id,
+                  //       PhoneNumber:customer.contact
+                  //    };
+                  //
+                  //    // Utilizar essa linha quando a função de envio de SMS estiver comentada.
+                  //    // A linha abaixo deve ficar comentada quando a função de SMS estiver descomentada.
+                  //
+                  //    //res.status(201);
+                  //
+                  //    sns.publish(params,function(err,data) {
+                  //       if (err) {
+                  //          console.log("erro: "+err);
+                  //          res.status(500).json(err);
+                  //          return;
+                  //       }
+                  //       console.log("Mensagem enviada com sucesso. MessageID: "+data.MessageId);
+                  //       res.location('/purchase/'+result._id)
+                  //       res.status(201).json(result)
+                  //    });
+                  //
+                  // });
 
                }),function purchaseError(error) {
                   res.status(500).json({"msg":"Erro Interno"})
@@ -141,18 +176,6 @@ api.insere = function(req,res) {
             console.log("Erro na obtenção dos dados do Device");
             res.status(500)
          };
-
-
-
-   //  modelEvento.create(evento)
-   //        .then(function(result) {
-   //            evento.id = result.id;
-   //            res.location('eventos/'+evento.serialNumber);
-   //            res.status(201).json(evento);
-   //        }, function(error) {
-   //            console.log(error);
-   //            res.sendStatus(500);
-   //        });
 
 };
 

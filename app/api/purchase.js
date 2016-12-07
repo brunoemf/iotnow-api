@@ -26,8 +26,18 @@ api.confirma = function (req,res) {
 
       };
 
+}
 
+api.lista = function (req,res) {
+   model.find()
+        .then(function(result) {
+          console.log('Recuperando compras...');
 
+          res.status(200).json(result);
+        }), function(error) {
+          console.log(error);
+          res.status(500).json(error);
+        };
 }
 
 
