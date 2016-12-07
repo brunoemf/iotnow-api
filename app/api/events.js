@@ -85,7 +85,7 @@ api.insere = function(req,res) {
                res.status(404).end();
                return;
             };
-            console.log("BreakPoint 1");
+
             purchase.customer = result.customer;
             purchase.vendor = result.vendor;
 
@@ -104,7 +104,7 @@ api.insere = function(req,res) {
             // Registra Purchase
             modelPurchase.create(purchase)
                .then(function resultPurchase(result) {
-                  console.log("BreakPoint 2");
+
                   //let customer = purchase.customer;
                   modelCustomer.findOne({_id:purchase.customer})
                      .then(function resultBuscaCustomer(customer) {
@@ -114,59 +114,28 @@ api.insere = function(req,res) {
                               PhoneNumber:customer.contact
                            };
 
-                           // Utilizar essa linha quando a função de envio de SMS estiver comentada.
-                           // A linha abaixo deve ficar comentada quando a função de SMS estiver descomentada.
+                           // Descomente essa linha quando a função de envio de SMS estiver comentada.
 
-                           //res.status(201);
-                           console.log("BreakPoint 3");
-                           sns.publish(params,function(err,data) {
-                              console.log("BreakPoint 4");
-                              if (err) {
-                                 console.log("erro: "+err);
-                                 res.status(500).json(err);
-                                 return;
-                              }
-                              console.log("Mensagem enviada com sucesso. MessageID: "+data.MessageId);
-                              res.location('/purchase/'+result._id)
-                              res.status(201).json(result)
-                           });
+                           res.status(201).json(result);
+
+                           //Função para envio de SMS. Comentar o bloco para desabilitar a função.
+
+                           // sns.publish(params,function(err,data) {
+                           //
+                           //    if (err) {
+                           //       console.log("erro: "+err);
+                           //       res.status(500).json(err);
+                           //       return;
+                           //    }
+                           //    console.log("Mensagem enviada com sucesso. MessageID: "+data.MessageId);
+                           //    res.location('/purchase/'+result._id)
+                           //    res.status(201).json(result)
+                           // });
                      }),function erroBubscaPorId(erro) {
                         console.log("erro: "+err);
                         res.status(500).json(err);
                         return;
                      };
-
-
-
-                  // Recupera contato do customer e envia SMS
-                  // modelCustomer.buscaPorId(purchase.customer,function (erro,customer) {
-                  //    if (erro) {
-                  //       console.log("erro: "+err);
-                  //       res.status(500).json(err);
-                  //       return;
-                  //    }
-                  //    var params = {
-                  //       Message:'Clique no link para confirmar sua compra: http://localhost/purchase/'+result._id,
-                  //       PhoneNumber:customer.contact
-                  //    };
-                  //
-                  //    // Utilizar essa linha quando a função de envio de SMS estiver comentada.
-                  //    // A linha abaixo deve ficar comentada quando a função de SMS estiver descomentada.
-                  //
-                  //    //res.status(201);
-                  //
-                  //    sns.publish(params,function(err,data) {
-                  //       if (err) {
-                  //          console.log("erro: "+err);
-                  //          res.status(500).json(err);
-                  //          return;
-                  //       }
-                  //       console.log("Mensagem enviada com sucesso. MessageID: "+data.MessageId);
-                  //       res.location('/purchase/'+result._id)
-                  //       res.status(201).json(result)
-                  //    });
-                  //
-                  // });
 
                }),function purchaseError(error) {
                   res.status(500).json({"msg":"Erro Interno"})
